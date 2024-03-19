@@ -16,10 +16,13 @@
 
               <nav class="site-navigation text-right ml-auto d-none d-lg-block" role="navigation">
                 <ul class="site-menu main-menu js-clone-nav ml-auto ">
-                  <li class="active"><a href="index.html" class="nav-link">Home</a></li>
-                  <li><a href="listing.html" class="nav-link">Cars</a></li>
-                  <li><a href="testimonials.html" class="nav-link">Thuê xe</a></li>
-                  <li><a href="blog.html" class="nav-link">Lịch thuê</a></li>
+                  <li class="active"><a href="index.php" class="nav-link">Home</a></li>
+                  <li><a href="cars.php" class="nav-link">Cars</a></li>
+                  <li><a href="rental.php" class="nav-link">Rental</a></li>
+                  <li><a href="about.php" class="nav-link">About</a></li>
+                  <li><a href="blog.php" class="nav-link">Blog</a></li>
+                  <li><a href="single.php" class="nav-link">Single</a></li>
+                  <li><a href="testimonials.php" class="nav-link">Testimonials</a></li>
                   <li><a href="about.html" class="nav-link"><i class="fa-solid fa-cart-shopping"></i><span style="color: red;
                   ">(5)</span></a></li>
                   <li><a href="/chothuexe/views/user/dangnhap.php" class="nav-link"><i class="fa-solid fa-user"></i><?php 

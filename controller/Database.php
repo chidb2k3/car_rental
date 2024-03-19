@@ -64,13 +64,12 @@ class Database {
      // Lấy danh sách hóa đơn
      public function getdsHoaDon() {
         $pdo = $this->connect();
-        $sql = "SELECT idhoadon, iduser, idcar, ngaygiothue, ngaygiotra, traxe, thanhtoan, ghichu FROM hoadon";
+        $sql = "SELECT idhoadon, iduser, thanhtoan FROM hoadon";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
         $hoadons = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $hoadon = new HoaDon($row['idhoadon'], $row['iduser'], $row['idcar'], $row['ngaygiothue'], $row['ngaygiotra'],$row['traxe'],
-            $row['thanhtoan'],$row['ghichu']);
+            $hoadon = new HoaDon($row['idhoadon'], $row['iduser'],$row['thanhtoan']);
             $hoadons[] = $hoadon;
         }
         return $hoadons;
