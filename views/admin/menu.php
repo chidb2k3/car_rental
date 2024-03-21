@@ -26,9 +26,9 @@
             </div>
         </div>
         <div class="navbar-nav w-100">
-            <a href="index.html" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>page</a>
+            <a href="index.html" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Trang chủ</a>
             <div class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-laptop me-2"></i>Quản lý</a>
+                <a href="#" class="nav-link" data-bs-toggle="dropdown"><i class="fa fa-laptop me-2"></i>Quản trị hệ thống</a>
                <!--  <div class="dropdown-menu bg-transparent border-0">
                     <a href="danhmuc.php?page=Danh mục" class="dropdown-item">Quản lý danh mục</a>
                     <a href="nguoidung.php?page=Người dùng" class="dropdown-item">Quản lý người dùng</a>
@@ -38,8 +38,19 @@
                     <a href="chuyendi.php?page=Chuyến đi" class="dropdown-item">Quản lý chuyến đi</a>
                 </div> -->
             </div>
-            <a href="/chothuexe/controller/System.php?cv=hangxe" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Hãng xe</a>
-            <a href="nguoidung.php" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Quản Lý User</a>
+            <a href="/chothuexe/controller/System.php?cv=hangxe" class="nav-item nav-link <?php
+            if(isset($_SESSION['active']) && $_SESSION['active']=="hangxe"){
+                echo "active";
+                unset($_SESSION['active']);
+            }
+             ?>" ><i class="fa fa-th me-2"></i>Hãng xe</a>
+            <a href="/chothuexe/controller/System.php?cv=xe" class="nav-item nav-link
+            <?php
+            if(isset($_SESSION['active']) && $_SESSION['active']=="xe"){
+                echo "active";
+                unset($_SESSION['active']);
+            }
+             ?>"><i class="fa fa-chart-bar me-2"></i>Quản lý xe</a>
             <a href="taixe.php" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Quản Lý Tài Xế</a>
             <a href="sanpham.php" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Quản Lý Xe</a>
             <a href="diadiem.php" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Quản Lý Địa Điểm</a>

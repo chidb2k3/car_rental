@@ -143,6 +143,10 @@
                         $count = 0;
                         if (isset ($_GET['sl'])) {
                             $sl = $_GET['sl'];
+                            $p =1;
+                            if(isset($_GET['page'])){
+                                $p = $_GET['page'];
+                            }
                             $sotrang = ceil(count($this->dscompany) / $sl);
                             $tranghientai = isset ($_GET['page']) ? $_GET['page'] : 1;
                             $batdau = ($tranghientai - 1) * $sl;
@@ -232,15 +236,15 @@
                 <?php
                 if (isset ($_GET['sl'])) {
                     echo ' <nav aria-label="...">
-                    <ul class="pagination">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" tabindex="-1">Previous</a>
-                        </li>';
+                    <ul class="pagination ">';?>
+                    
+                        <li class="page-item <?php if($p==1){echo 'disabled';} ?>">
+                            <a class="page-link" href="?cv=hangxe&sl=<?php echo $sl?>&page=<?php $p--; echo $p; $p++;
+                            ?>" tabindex="-1">Previous</a>
+                            <?php
+                        echo '</li>';
+                        
                     for ($i = 1; $i <= $sotrang; $i++) {
-                        $p = 1;
-                        if (isset ($_GET['page'])) {
-                            $p = $_GET['page'];
-                        }
                         if ($i == $p) {
                             echo "<li class='page-item active'><a class='page-link' 
                                 href='?cv=hangxe&sl=$sl&page=$i'>$i</a></li>";
@@ -250,12 +254,24 @@
                         }
 
                     }
-                    echo '
-                        <li class="page-item">
-                            <a class="page-link" href="#">Next</a>
+                    $p++;
+                    if($p == $sotrang+1){
+                        echo "
+                        <li class='page-item disabled'  >
+                            <a class='page-link' href='?cv=hangxe&sl=$sl&page=$p'>Next</a>
                         </li>
                     </ul>
-                </nav>';
+                </nav>";
+                    }else{
+                        echo "
+                        <li class='page-item'>
+                            <a class='page-link' href='?cv=hangxe&sl=$sl&page=$p'>Next</a>
+                        </li>
+                    </ul>
+                </nav>";
+
+                    }
+                    
 
 
 

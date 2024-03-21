@@ -102,7 +102,7 @@ class System
     public function layHangXe($id)
     {
         foreach ($this->dscompany as $company) {
-            if($company->getIdCompany()==$id){
+            if ($company->getIdCompany() == $id) {
                 return $company;
                 break;
             }
@@ -177,6 +177,7 @@ class System
     // Start Quản lý Hãng Xe
     public function HangXe()
     {
+        $_SESSION['active'] = "hangxe";
         include_once ("../views/admin/hangxe.php");
     }
     public function KiemTraTonTai($namecompany): bool
@@ -188,38 +189,51 @@ class System
         }
         return false;
     }
+    public function tenHangXe($id)
+    {
+        foreach ($this->dscompany as $company) {
+            if ($company->getIdCompany() == $id) {
+                return $company->getNameCompany();
+            }
+        }
+    }
+    
     public function ThemHangXe()
     {
         $namecompany = $_POST['namecompany'];
-       
-            if ($this->KiemTraTonTai($namecompany) == true) {
-                echo "<script>alert('Hãng xe đã có trong danh sách!');</script>";
-            } else {
-                try {
-                    $conn = $this->database->connect();
-                    $sql = "INSERT INTO company (namecompany)
+
+        if ($this->KiemTraTonTai($namecompany) == true) {
+            echo "<script>alert('Hãng xe đã có trong danh sách!');</script>";
+        } else {
+            try {
+                $conn = $this->database->connect();
+                $sql = "INSERT INTO company (namecompany)
                     VALUES ('$namecompany')";
 
-                    // Thực thi câu lệnh SQL
-                    $conn->exec($sql);
-                    echo "<script>alert('Thêm thành công!');</script>";
-                    $_SESSION['thongbao']="Thêm thành công!";
+                // Thực thi câu lệnh SQL
+                $conn->exec($sql);
+                echo "<script>alert('Thêm thành công!');</script>";
+                $_SESSION['thongbao'] = "Thêm thành công!";
 
-                } catch (PDOException $e) {
-                    // Nếu có lỗi, in ra thông báo lỗi
-                    echo "Lỗi: " . $e->getMessage();
-                }
+            } catch (PDOException $e) {
+                // Nếu có lỗi, in ra thông báo lỗi
+                echo "Lỗi: " . $e->getMessage();
             }
-            $this->loadSystem();
-            header("Location: System.php?cv=hangxe");
+        }
+        $this->loadSystem();
+        header("Location: System.php?cv=hangxe");
     }
-    public function xoaHangXe($id){
+    public function xoaHangXe($id)
+    {
         try {
+          
+            $this->xoaXeTheoHang($this->tenHangXe($id));
+
             $conn = $this->database->connect();
             $sql = "DELETE FROM company WHERE idcompany = $id";
             $conn->exec($sql);
             echo "<script>alert('Xóa thành công!');</script>";
-            $_SESSION['thongbao']="Xóa thành công!";
+            $_SESSION['thongbao'] = "Xóa thành công!";
 
         } catch (PDOException $e) {
             // Nếu có lỗi, in ra thông báo lỗi
@@ -230,7 +244,8 @@ class System
         header("Location: System.php?cv=hangxe");
 
     }
-    public function capNhatHangXe($id, $name){
+    public function capNhatHangXe($id, $name)
+    {
         try {
             $conn = $this->database->connect();
             $sql = "UPDATE company
@@ -238,7 +253,7 @@ class System
             WHERE idcompany=$id";
             $conn->exec($sql);
             // echo "<script>alert('Xóa thành công!');</script>";
-            $_SESSION['thongbao']="Cập nhật thành công!";
+            $_SESSION['thongbao'] = "Cập nhật thành công!";
 
         } catch (PDOException $e) {
             // Nếu có lỗi, in ra thông báo lỗi
@@ -248,13 +263,166 @@ class System
         // $this->HangXe();
         header("Location: System.php?cv=hangxe");
     }
-    public function soLuongHangXe(){
+    public function soLuongHangXe()
+    {
         return count($this->dscompany);
     }
+    // end Quản lý hãng xe
+
+    // Start xe
+    public function Xe()
+    {
+        $_SESSION['active'] = "xe";
+        include_once ("../views/admin/dsxe.php");
+    }
+    public function soLuongXe()
+    {
+        return count($this->dscar);
+    }
+    public function themXe()
+    {
+        if (isset ($_FILES["photo"]) && $_FILES["photo"]["error"] == 0) {
+            $allowed = array("jpg" => "image/jpg", "jpeg" => "image/jpeg", "gif" => "image/gif", "png" => "image/png");
+            $filename = $_FILES["photo"]["name"];
+            $filetype = $_FILES["photo"]["type"];
+            $filesize = $_FILES["photo"]["size"];
+
+            // Xác minh phần mở rộng tệp
+            $ext = pathinfo($filename, PATHINFO_EXTENSION);
+            if (!array_key_exists($ext, $allowed))
+                die ("Lỗi: Vui lòng chọn định dạng tệp hợp lệ.");
+
+            // Xác minh kích thước tệp - tối đa 5MB
+            $maxsize = 5 * 1024 * 1024;
+            if ($filesize > $maxsize)
+                die ("Lỗi: Kích thước tệp lớn hơn giới hạn cho phép.");
+
+            // Xác minh loại MIME của tệp
+            if (in_array($filetype, $allowed)) {
+                // Kiểm tra xem tệp có tồn tại hay không trước khi tải lên
+                if (file_exists("../views/img/xes/" . $filename)) {
+                    echo $filename . " đã tồn tại.";
+                } else {
+                    $carend = end($this->dscar);
+                    $tenanh = $carend->getIdcar() + 1;
+                    $filename = "$tenanh.png";
+
+                    //echo $_FILES["photo"]["tmp_name"];
+                    if (move_uploaded_file($_FILES["photo"]["tmp_name"], "../views/img/xes/" . $filename)) { // có thể có lỗi
+                        echo "Tệp của bạn đã được tải lên thành công.";
+                    } else {
+                        echo "Lỗi: không thể di chuyển tệp đến upload/";
+                    }
+                }
+            } else {
+                echo "Lỗi: Đã xảy ra sự cố khi tải tệp của bạn lên. Vui lòng thử lại.";
+            }
+        } else {
+            echo "Error: " . $_FILES["photo"]["error"];
+        }
+        $namecar = $_POST['namecar'];
+        $bienso = $_POST['bienso'];
+        $soghe = $_POST['soghe'];
+        $quantity = $_POST['quantity'];
+        $price = $_POST['price'];
+        $namecompany = $_POST['company'];
+        try {
+            $conn = $this->database->connect();
+            $sql = "INSERT INTO cars (namecar, bienso, soghe, quantity, price, namecompany)
+                    VALUES ('$namecar', '$bienso', $soghe, $quantity, $price, '$namecompany')";
+
+            // Thực thi câu lệnh SQL
+            $conn->exec($sql);
+            echo "<script>alert('Thêm thành công!');</script>";
+            $_SESSION['thongbao'] = "Thêm thành công!";
+
+        } catch (PDOException $e) {
+            // Nếu có lỗi, in ra thông báo lỗi
+            echo "Lỗi: " . $e->getMessage();
+        }
+
+        $this->loadSystem();
+        header("Location: System.php?cv=xe");
+    }
+    public function xoaXe($id)
+    {
+        try {
+            $conn = $this->database->connect();
+            $sql = "DELETE FROM cars WHERE idcar = $id";
+            $conn->exec($sql);
+            echo "<script>alert('Xóa thành công!');</script>";
+            $_SESSION['thongbao'] = "Xóa thành công!";
+
+        } catch (PDOException $e) {
+            // Nếu có lỗi, in ra thông báo lỗi
+            echo "Lỗi: " . $e->getMessage();
+        }
+        $this->loadSystem();
+        // $this->HangXe();
+        header("Location: System.php?cv=xe");
+
+    }
+    public function xoaXeTheoHang($namecompany)
+    {
+        try {
+            $conn = $this->database->connect();
+            $sql = "DELETE FROM cars WHERE namecompany = '$namecompany'";
+            $conn->exec($sql);
+            // echo "<script>alert('Xóa thành công!');</script>";
+            // $_SESSION['thongbao'] = "Xóa thành công!";
+
+        } catch (PDOException $e) {
+            // Nếu có lỗi, in ra thông báo lỗi
+            echo "Lỗi: " . $e->getMessage();
+        }
+        // $this->loadSystem();
+        // $this->HangXe();
+        // header("Location: System.php?cv=xe");
+
+    }
+    public function layXe($id)
+    {
+        foreach ($this->dscar as $car) {
+            if ($car->getIdcar() == $id) {
+                return $car;
+            }
+        }
+    }
+    public function capNhatXe()
+    {
+        try {
+            $idcar = $_POST['idcar'];
+            $namecar = $_POST['namecar'];
+            $bienso = $_POST['bienso'];
+            $soghe = $_POST['soghe'];
+            $quantity = $_POST['quantity'];
+            $price = $_POST['price'];
+            $namecompany = $_POST['company'];
+            
+            $conn = $this->database->connect();
+            $sql = "UPDATE cars
+            SET namecar = '$namecar', bienso = '$bienso', soghe = $soghe, quantity = $quantity, price = $price, namecompany = '$namecompany'
+            WHERE idcar=$idcar";
+            $conn->exec($sql);
+            // echo "<script>alert('Xóa thành công!');</script>";
+            $_SESSION['thongbao'] = "Cập nhật thành công!";
+
+        } catch (PDOException $e) {
+            // Nếu có lỗi, in ra thông báo lỗi
+            echo "Lỗi: " . $e->getMessage();
+        }
+        $this->loadSystem();
+        // $this->HangXe();
+        header("Location: System.php?cv=xe");
+    }
+
+
+
+    // end xe
 
 }
 
-// end Quản lý hãng xe
+
 
 $database = new Database();
 $hethong = new System($database, $database->getdsUsers(), $database->getdsCompany(), $database->getdsCar(), $database->getdsHoaDon(), $database->getdsBinhLuan());
@@ -295,6 +463,18 @@ switch ($cv) {
         break;
     case 'capnhathangxe':
         $hethong->capNhatHangXe($_POST['idcompany'], $_POST['namecompany']);
+        break;
+    case 'xe':
+        $hethong->Xe();
+        break;
+    case 'themxe':
+        $hethong->themXe();
+        break;
+    case 'xoaxe':
+        $hethong->xoaXe($_GET['id']);
+        break;
+    case 'capnhatxe':
+        $hethong->capNhatXe();
         break;
     //Thêm các trường hợp khác nếu cần
     default:
