@@ -64,29 +64,42 @@ class Database {
      // Lấy danh sách hóa đơn
      public function getdsHoaDon() {
         $pdo = $this->connect();
-        $sql = "SELECT idhoadon, iduser, thanhtoan FROM hoadon";
+        $sql = "SELECT idhoadon, iduser, thoigian, tongtien, thanhtoan FROM hoadon";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
         $hoadons = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $hoadon = new HoaDon($row['idhoadon'], $row['iduser'],$row['thanhtoan']);
+            $hoadon = new HoaDon($row['idhoadon'], $row['iduser'], $row['thoigian'], $row['tongtien'], $row['thanhtoan']);
             $hoadons[] = $hoadon;
         }
         return $hoadons;
     }
+    public function getdsChiTietHoaDon() {
+        $pdo = $this->connect();
+        $sql = "SELECT * FROM chitiethoadon";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $chitiethoadons = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $chitiethoadon = new ChiTietHoaDon($row['idchitiet'], $row['idhoadon'], $row['idcar'], $row['ngaygiothue'], $row['ngaygiotra'],$row['traxe'],$row['ghichu']);
+            $chitiethoadons[] = $chitiethoadon;
+        }
+        return $chitiethoadons;
+    }
      // Lấy danh sách hóa đơn
      public function getdsBinhLuan() {
         $pdo = $this->connect();
-        $sql = "SELECT idbinhluan, iduser, idcar, noidung, danhgia FROM binhluan";
+        $sql = "SELECT idbinhluan, iduser, idcar, noidung, danhgia, thoigian FROM binhluan";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
         $binhluans = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $binhluan = new BinhLuan($row['idbinhluan'], $row['iduser'], $row['idcar'], $row['noidung'], $row['danhgia']);
+            $binhluan = new BinhLuan($row['idbinhluan'], $row['iduser'], $row['idcar'], $row['noidung'], $row['danhgia'],$row['thoigian']);
             $binhluans[] = $binhluan;
         }
         return $binhluans;
     }
+
     
 }
 

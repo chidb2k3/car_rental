@@ -7,14 +7,22 @@ class BinhLuan {
     private $idcar;
     private $noidung;
     private $danhgia;
+    private $thoigian;
 
     // Constructor
-    public function __construct($idbinhluan, $iduser, $idcar, $noidung, $danhgia) {
+    public function __construct($idbinhluan=null, $iduser=null, $idcar=null, $noidung=null, $danhgia=null,$thoigian=null) {
         $this->idbinhluan = $idbinhluan;
         $this->iduser = $iduser;
         $this->idcar = $idcar;
         $this->noidung = $noidung;
         $this->danhgia = $danhgia;
+        $this->thoigian = $thoigian;
+    }
+    public function getThoiGian(){
+        return $this->thoigian;
+    }
+    public function setThoiGian($thoigian){
+        $this->thoigian = $thoigian;
     }
 
     // Getter và Setter cho các thuộc tính

@@ -6,7 +6,7 @@
 </head>
 <body>
     <form>
-        <label for="ngay_gio">Chọn Ngày và Giờ:</label>
+        <!-- <label for="ngay_gio">Chọn Ngày và Giờ:</label> -->
         <input type="text" id="ngay_gio" name="ngay_gio">
     </form>
 
@@ -21,5 +21,7 @@
             });
         });
     </script>
+    <img src="">
+    <span style="color: red;">Chưa thanh toán</span>
 </body>
 </html>

@@ -16,20 +16,19 @@
 
               <nav class="site-navigation text-right ml-auto d-none d-lg-block" role="navigation">
                 <ul class="site-menu main-menu js-clone-nav ml-auto ">
-                  <li class="active"><a href="index.php" class="nav-link">Home</a></li>
-                  <li><a href="cars.php" class="nav-link">Cars</a></li>
-                  <li><a href="rental.php" class="nav-link">Rental</a></li>
-                  <li><a href="about.php" class="nav-link">About</a></li>
-                  <li><a href="blog.php" class="nav-link">Blog</a></li>
-                  <li><a href="single.php" class="nav-link">Single</a></li>
-                  <li><a href="testimonials.php" class="nav-link">Testimonials</a></li>
-                  <li><a href="about.html" class="nav-link"><i class="fa-solid fa-cart-shopping"></i><span style="color: red;
-                  ">(5)</span></a></li>
+                  <li class="active"><a href="/chothuexe/controller/System.php?cv=u_home" class="nav-link">Home</a></li>
+                  <li><a href="/chothuexe/controller/System.php?cv=u_xe" class="nav-link">Cars</a></li>
+                  <li><a href="/chothuexe/controller/System.php?cv=giaodich" class="nav-link">Giao dịch</a></li>
+                  <li><a href="/chothuexe/controller/System.php?cv=u_lienhe" class="nav-link">Liên hệ</a></li>
+                  <li><a href="/chothuexe/controller/System.php?cv=giohang" class="nav-link"><i class="fa-solid fa-cart-shopping"></i><span style="color: red;
+                  ">(<?php if(isset($_SESSION['Cart'])){
+                    echo count($_SESSION['Cart']);
+                  } ?>)</span></a></li>
                   <li><a href="/chothuexe/views/user/dangnhap.php" class="nav-link"><i class="fa-solid fa-user"></i><?php 
                  
                   if(isset($_SESSION['name'])){
                     echo '<b>    '.$_SESSION['name'].'</b>';
-                    echo '<a href="?logout" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></a>
+                    echo '<a href="/chothuexe/controller/System.php?cv=dangxuat" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></a>
                     ';
                   }
                    ?></a></li>

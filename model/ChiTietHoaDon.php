@@ -8,7 +8,7 @@ class ChiTietHoaDon {
     private $traxe;
     private $ghichu;
 
-    public function __construct($idchitiet, $idhoadon, $idcar, $ngaygiothue, $ngaygiotra, $traxe, $ghichu) {
+    public function __construct($idchitiet=null, $idhoadon=null, $idcar=null, $ngaygiothue=null, $ngaygiotra=null, $traxe=null, $ghichu=null) {
         $this->idchitiet = $idchitiet;
         $this->idhoadon = $idhoadon;
         $this->idcar = $idcar;

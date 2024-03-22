@@ -4,6 +4,7 @@ include '../model/User.php';
 include '../model/Car.php';
 include '../model/BinhLuan.php';
 include '../model/HoaDon.php';
+include '../model/ChiTietHoaDon.php';
 include 'Database.php';
 
 class System
@@ -13,16 +14,19 @@ class System
     private $dscompany; // Mảng các đối tượng Company
     private $dscar; // Mảng các đối tượng Car
     private $dshoadon; // Mảng các đối tượng HoaDon
+    private $dschitiethoadon;
     private $dsbinhluan; // Mảng các đối tượng BinhLuan
     private $database;
 
+
     // Constructor
-    public function __construct($database, $dsuser, $dscompany, $dscar, $dshoadon, $dsbinhluan)
+    public function __construct($database, $dsuser, $dscompany, $dscar, $dshoadon, $dschitiethoadon, $dsbinhluan)
     {
         $this->dsuser = $dsuser;
         $this->dscompany = $dscompany;
         $this->dscar = $dscar;
         $this->dshoadon = $dshoadon;
+        $this->dschitiethoadon = $dschitiethoadon;
         $this->dsbinhluan = $dsbinhluan;
         $this->database = $database;
     }
@@ -135,6 +139,7 @@ class System
             if ($user->getEmail() == $email && $user->getPassword() == $password) {
                 $_SESSION['you'] = $user;
                 $_SESSION['name'] = $user->getFullname();
+                $_SESSION['iduser'] = $user->getIduser();
                 return true;
             }
         }
@@ -197,7 +202,7 @@ class System
             }
         }
     }
-    
+
     public function ThemHangXe()
     {
         $namecompany = $_POST['namecompany'];
@@ -226,7 +231,7 @@ class System
     public function xoaHangXe($id)
     {
         try {
-          
+
             $this->xoaXeTheoHang($this->tenHangXe($id));
 
             $conn = $this->database->connect();
@@ -300,20 +305,17 @@ class System
             // Xác minh loại MIME của tệp
             if (in_array($filetype, $allowed)) {
                 // Kiểm tra xem tệp có tồn tại hay không trước khi tải lên
-                if (file_exists("../views/img/xes/" . $filename)) {
-                    echo $filename . " đã tồn tại.";
-                } else {
-                    $carend = end($this->dscar);
-                    $tenanh = $carend->getIdcar() + 1;
-                    $filename = "$tenanh.png";
+                $carend = end($this->dscar);
+                $tenanh = $carend->getIdcar() + 1;
+                $filename = "$tenanh.png";
 
-                    //echo $_FILES["photo"]["tmp_name"];
-                    if (move_uploaded_file($_FILES["photo"]["tmp_name"], "../views/img/xes/" . $filename)) { // có thể có lỗi
-                        echo "Tệp của bạn đã được tải lên thành công.";
-                    } else {
-                        echo "Lỗi: không thể di chuyển tệp đến upload/";
-                    }
+                //echo $_FILES["photo"]["tmp_name"];
+                if (move_uploaded_file($_FILES["photo"]["tmp_name"], "../views/img/xes/" . $filename)) { // có thể có lỗi
+                    echo "Tệp của bạn đã được tải lên thành công.";
+                } else {
+                    echo "Lỗi: không thể di chuyển tệp đến upload/";
                 }
+
             } else {
                 echo "Lỗi: Đã xảy ra sự cố khi tải tệp của bạn lên. Vui lòng thử lại.";
             }
@@ -347,6 +349,8 @@ class System
     public function xoaXe($id)
     {
         try {
+            $this->xoaChiTietHoaDonTheoXe($id);
+            $this->xoaBinhLuanTheoXe($id);
             $conn = $this->database->connect();
             $sql = "DELETE FROM cars WHERE idcar = $id";
             $conn->exec($sql);
@@ -362,9 +366,12 @@ class System
         header("Location: System.php?cv=xe");
 
     }
+
     public function xoaXeTheoHang($namecompany)
     {
         try {
+            $car = $this->layXeTheoTen($namecompany);
+            $this->xoaChiTietHoaDonTheoXe($car->getIdcar());
             $conn = $this->database->connect();
             $sql = "DELETE FROM cars WHERE namecompany = '$namecompany'";
             $conn->exec($sql);
@@ -388,6 +395,23 @@ class System
             }
         }
     }
+    public function layXeTheoTen($namecompany)
+    {
+        foreach ($this->dscar as $car) {
+            if ($car->getCompany() == $namecompany) {
+                return $car;
+            }
+        }
+    }
+    public function layTenXe($id)
+    {
+        foreach ($this->dscar as $car) {
+            if ($car->getIdcar() == $id) {
+                return $car->getNamecar();
+            }
+        }
+    }
+
     public function capNhatXe()
     {
         try {
@@ -398,7 +422,7 @@ class System
             $quantity = $_POST['quantity'];
             $price = $_POST['price'];
             $namecompany = $_POST['company'];
-            
+
             $conn = $this->database->connect();
             $sql = "UPDATE cars
             SET namecar = '$namecar', bienso = '$bienso', soghe = $soghe, quantity = $quantity, price = $price, namecompany = '$namecompany'
@@ -418,14 +442,468 @@ class System
 
 
 
+
     // end xe
+    // start user
+    public function KhachHang()
+    {
+        $_SESSION['active'] = "khachhang";
+        include_once ("../views/admin/khachhang.php");
+    }
+    public function soLuongKhachHang()
+    {
+        return count($this->dsuser);
+    }
+    public function xoaKhachHang($id)
+    {
+        try {
+            $this->xoaHoaDonTheoMaKH($id);
+            $conn = $this->database->connect();
+            $sql = "DELETE FROM users WHERE iduser = $id";
+            $conn->exec($sql);
+            echo "<script>alert('Xóa thành công!');</script>";
+            $_SESSION['thongbao'] = "Xóa thành công!";
+
+        } catch (PDOException $e) {
+            // Nếu có lỗi, in ra thông báo lỗi
+            echo "Lỗi: " . $e->getMessage();
+        }
+        $this->loadSystem();
+        // $this->HangXe();
+        header("Location: System.php?cv=khachhang");
+
+    }
+    public function layKhachHang($id)
+    {
+        foreach ($this->dsuser as $user) {
+            if ($user->getIduser() == $id) {
+                return $user;
+            }
+        }
+    }
+
+    //end user
+    //start hoadon
+    public function hoaDon()
+    {
+        $_SESSION['active'] = "hoadon";
+        include_once ("../views/admin/dshoadon.php");
+    }
+    public function soLuongHoaDon()
+    {
+        return count($this->dshoadon);
+    }
+    public function xoaHoaDonTheoMaKH($id)
+    {
+        try {
+            $conn = $this->database->connect();
+            $sql = "DELETE FROM hoadon WHERE iduser = $id";
+            $conn->exec($sql);
+            // echo "<script>alert('Xóa thành công!');</script>";
+            // $_SESSION['thongbao'] = "Xóa thành công!";
+
+        } catch (PDOException $e) {
+            // Nếu có lỗi, in ra thông báo lỗi
+            echo "Lỗi: " . $e->getMessage();
+        }
+        // $this->loadSystem();
+        // $this->HangXe();
+        // header("Location: System.php?cv=xe");
+
+    }
+    public function laydsChiTietTheoHoaDon($id)
+    {
+        $ds = [];
+        foreach ($this->dschitiethoadon as $chitiethoadon) {
+            if ($chitiethoadon->getIdhoadon() == $id) {
+                $ds[] = $chitiethoadon;
+            }
+        }
+        return $ds;
+    }
+    public function layHoaDonTheoMaHoaDon($id)
+    {
+        foreach ($this->dshoadon as $hoadon) {
+            if ($hoadon->getIdHoaDon() == $id) {
+                return $hoadon;
+            }
+        }
+    }
+    public function xoaChiTietHoaDonTheoHoaDon($id)
+    {
+        try {
+            $conn = $this->database->connect();
+            $sql = "DELETE FROM chitiethoadon WHERE idhoadon = $id";
+            $conn->exec($sql);
+            // echo "<script>alert('Xóa thành công!');</script>";
+            // $_SESSION['thongbao'] = "Xóa thành công!";
+
+        } catch (PDOException $e) {
+            // Nếu có lỗi, in ra thông báo lỗi
+            echo "Lỗi: " . $e->getMessage();
+        }
+        // $this->loadSystem();
+        // $this->HangXe();
+        // header("Location: System.php?cv=xe");
+
+    }
+    public function xoaChiTietHoaDonTheoXe($id)
+    {
+        try {
+            $conn = $this->database->connect();
+            $sql = "DELETE FROM chitiethoadon WHERE idcar = $id";
+            $conn->exec($sql);
+            // echo "<script>alert('Xóa thành công!');</script>";
+            // $_SESSION['thongbao'] = "Xóa thành công!";
+
+        } catch (PDOException $e) {
+            // Nếu có lỗi, in ra thông báo lỗi
+            echo "Lỗi: " . $e->getMessage();
+        }
+        // $this->loadSystem();
+        // $this->HangXe();
+        // header("Location: System.php?cv=xe");
+
+    }
+    public function xoaHoaDon($id)
+    {
+        try {
+
+            $this->xoaChiTietHoaDonTheoHoaDon($id);
+
+            $conn = $this->database->connect();
+            $sql = "DELETE FROM hoadon WHERE idhoadon = $id";
+            $conn->exec($sql);
+            echo "<script>alert('Xóa thành công!');</script>";
+            $_SESSION['thongbao'] = "Xóa thành công!";
+
+        } catch (PDOException $e) {
+            // Nếu có lỗi, in ra thông báo lỗi
+            echo "Lỗi: " . $e->getMessage();
+        }
+        $this->loadSystem();
+        // $this->HangXe();
+        header("Location: System.php?cv=hoadon");
+
+    }
+    public function xacThucThanhToan($id)
+    {
+        try {
+
+            $conn = $this->database->connect();
+            $sql = "UPDATE hoadon
+            SET thanhtoan = 1
+            WHERE idhoadon=$id";
+            $conn->exec($sql);
+            // echo "<script>alert('Xóa thành công!');</script>";
+            $_SESSION['thongbao'] = "Đã xác thực thanh toán thành công cho hóa đơn HD-" . $id;
+
+        } catch (PDOException $e) {
+            // Nếu có lỗi, in ra thông báo lỗi
+            echo "Lỗi: " . $e->getMessage();
+        }
+        $this->loadSystem();
+        // $this->HangXe();
+        header("Location: System.php?cv=hoadon&idhoadonchitiet=$id");
+    }
+    public function tangSoXe($id,$sl){
+        try {
+
+            $conn = $this->database->connect();
+            $sql = "UPDATE cars
+            SET quantity = quantity + $sl
+            WHERE idcar=$id";
+            $conn->exec($sql);
+            // echo "<script>alert('Xóa thành công!');</script>";
+            // $_SESSION['thongbao'] = "Cập nhật thành công!";
+
+        } catch (PDOException $e) {
+            // Nếu có lỗi, in ra thông báo lỗi
+            echo "Lỗi: " . $e->getMessage();
+        }
+    }
+   
+    public function traXe($id)
+    {
+        try {
+            $idcar = $_GET['idcar'];
+            $sl = $_GET['sl'];
+            $idhoadonchitiet = $_GET['idhoadonchitiet'];
+            $conn = $this->database->connect();
+            $sql = "UPDATE chitiethoadon
+            SET traxe = 1
+            WHERE idchitiet=$id";
+            $conn->exec($sql);
+            // echo "<script>alert('Xóa thành công!');</script>";
+            $_SESSION['thongbao'] = "Xe thuộc hồ sơ HS-" . $id . " đã trả thành công!";
+            $this->tangSoXe($idcar,$sl);
+
+
+
+        } catch (PDOException $e) {
+            // Nếu có lỗi, in ra thông báo lỗi
+            echo "Lỗi: " . $e->getMessage();
+        }
+        $this->loadSystem();
+        // $this->HangXe();
+        header("Location: System.php?cv=hoadon&idhoadonchitiet=$idhoadonchitiet");
+    }
+
+
+
+
+
+
+
+    //end hoadon
+    //start binhluan
+    public function binhLuan()
+    {
+        $_SESSION['active'] = "binhluan";
+        include_once ("../views/admin/binhluan.php");
+    }
+    public function xoaBinhLuanTheoXe($id)
+    {
+        try {
+            $conn = $this->database->connect();
+            $sql = "DELETE FROM binhluan WHERE idcar = $id";
+            $conn->exec($sql);
+            echo "<script>alert('Xóa thành công!');</script>";
+            $_SESSION['thongbao'] = "Xóa thành công!";
+
+        } catch (PDOException $e) {
+            // Nếu có lỗi, in ra thông báo lỗi
+            echo "Lỗi: " . $e->getMessage();
+        }
+
+    }
+    public function soLuongBinhLuan()
+    {
+        return count($this->dsbinhluan);
+    }
+    public function xoaBinhLuan($id)
+    {
+        try {
+            $conn = $this->database->connect();
+            $sql = "DELETE FROM binhluan WHERE idbinhluan = $id";
+            $conn->exec($sql);
+            echo "<script>alert('Xóa thành công!');</script>";
+            $_SESSION['thongbao'] = "Xóa thành công!";
+
+        } catch (PDOException $e) {
+            // Nếu có lỗi, in ra thông báo lỗi
+            echo "Lỗi: " . $e->getMessage();
+        }
+        $this->loadSystem();
+        // $this->HangXe();
+        header("Location: System.php?cv=binhluan");
+
+    }
+
+
+    //end binhluan
+    //user
+    public function u_Xe()
+    {
+        include_once ("../views/user/cars.php");
+    }
+    public function u_Home()
+    {
+        include_once ("../views/user/index.php");
+    }
+    public function u_LienHe()
+    {
+        include_once ("../views/user/lienhe.php");
+    }
+    public function u_ChiTiet()
+    {
+        include_once ("../views/user/chitiet.php");
+    }
+    public function themvaogiohang()
+    {
+        if (isset ($_SESSION['you'])) {
+
+            $id = $_GET['id'];
+            if (isset ($_SESSION['Cart'][$id])) {
+                $soluong = $_SESSION['Cart'][$id] + 1;
+                $_SESSION['Cart'][$id] = $soluong;
+            } else {
+                $soluong = 1;
+                $_SESSION['Cart'][$id] = $soluong;
+            }
+            // header("location:cart.php");
+            // exit();
+            // print_r($_SESSION['Cart']);
+            header("Location: System.php?cv=giohang");
+            // session_destroy();
+            // echo "Sản phẩm đã đc thêm vào giỏ hàng";
+            // header("location: ../home/giohang.php");
+        } else {
+
+            $thongbao = "Vui lòng đăng nhập trước khi đặt xe!!";
+            include_once ("../views/user/dangnhap.php");
+        }
+
+    }
+    public function giohang()
+    {
+        $sid = 0;
+        $first = 1;
+        if (isset ($_SESSION['Cart'])) {
+
+            foreach ($_SESSION['Cart'] as $key => $value) {
+                if ($first == 1) {
+                    $sid = $key;
+                    $first = 0;
+                } else
+                    $sid = $sid . "," . $key;
+            }
+
+        }
+        $conn = $this->database->connect();
+        $sql = "SELECT * FROM cars where idcar in ($sid)";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $cars = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $car = new Car($row['idcar'], $row['namecar'], $row['bienso'], $row['soghe'], $row['quantity'], $row['price'], $row['namecompany']);
+            $cars[] = $car;
+        }
+
+        include_once ("../views/user/giohang.php");
+    }
+    public function xoakhoigiohang()
+    {
+        $id = $_GET['id'];
+        unset($_SESSION['Cart'][$id]);
+        header("Location: System.php?cv=giohang");
+    }
+    public function cong()
+    {
+        $id = $_GET['id'];
+        $car = $this->layXe($id);
+        if ($_SESSION['Cart'][$id] < $car->getQuantity()) {
+            $_SESSION['Cart'][$id] += 1;
+        }
+
+        header("Location: System.php?cv=giohang");
+    }
+    public function tru()
+    {
+        $id = $_GET['id'];
+        if ($_SESSION['Cart'][$id] > 1) {
+            $_SESSION['Cart'][$id] -= 1;
+        }
+
+        header("Location: System.php?cv=giohang");
+    }
+
+
+    // endusser
+    public function dangXuat()
+    {
+        session_unset();
+        session_destroy();
+        header("Location: ../views/user/dangnhap.php");
+    }
+    public function thanhToan()
+    {
+        $_SESSION['chitiets'] = [];
+        foreach ($_SESSION['Cart'] as $key => $value) {
+            $idcar = $key;
+            $soluong = $_SESSION['Cart'][$key];
+            $ngaygiothue = date('Y-m-d H:i:s', strtotime($_POST["ngaygiothue$key"]));
+            $_SESSION["ngaygiothue$key"] = $ngaygiothue;
+            $ngaygiotra = date('Y-m-d H:i:s', strtotime($_POST["ngaygiotra$key"]));
+            $_SESSION["ngaygiotra$key"] = $ngaygiotra;
+            $chitiet = new ChiTietHoaDon(null, null, $idcar, $ngaygiothue, $ngaygiotra, 0, $soluong);
+            $_SESSION['chitiets'][] = $chitiet;
+        }
+        include_once ("../views/user/thongtinhoadon.php");
+
+    }
+    public function layGioHang(){
+        $carts = [];
+        foreach ($_SESSION['Cart'] as $key => $value) {
+            $idcar = $key;
+            $soluong = $_SESSION['Cart'][$key];
+            $ngaygiothue = date('Y-m-d H:i:s', strtotime($_SESSION["ngaygiothue$key"]));
+            $ngaygiotra = date('Y-m-d H:i:s', strtotime($_SESSION["ngaygiotra$key"]));
+            $chitiet = new ChiTietHoaDon(null, null, $idcar, $ngaygiothue, $ngaygiotra, 0, $soluong);
+            $carts[] = $chitiet;
+        }
+        return $carts;
+    }
+    public function giamSoXe($id,$sl){
+        try {
+
+            $conn = $this->database->connect();
+            $sql = "UPDATE cars
+            SET quantity = quantity - $sl
+            WHERE idcar=$id";
+            $conn->exec($sql);
+            // echo "<script>alert('Xóa thành công!');</script>";
+            // $_SESSION['thongbao'] = "Cập nhật thành công!";
+
+        } catch (PDOException $e) {
+            // Nếu có lỗi, in ra thông báo lỗi
+            echo "Lỗi: " . $e->getMessage();
+        }
+    }
+    public function hoanTatThanhToan()
+    {
+        try {
+            $iduser = $_SESSION['iduser'];
+            $thoigian = date('Y-m-d H:i:s');
+            $tongtien = $_SESSION['tongtien'];
+            $conn = $this->database->connect();
+            $sql = "INSERT INTO hoadon (iduser, thoigian, tongtien, thanhtoan)
+            VALUES ('$iduser', '$thoigian', '$tongtien', 0)";
+            $conn->exec($sql);
+            // echo "<script>alert('Thêm thành công!');</script>";
+            $_SESSION['thongbao'] = "Thêm thành công!";
+            $idhoadon = $conn->lastInsertId();
+            echo "HIHI";
+            $carts = $this->layGioHang();
+            foreach ($carts as $chitiet) {
+                $chitiet->setIdhoadon($idhoadon);
+                $idcar = $chitiet->getIdcar();
+                $ngaygiothue = $chitiet->getNgaygiothue();
+                $ngaygiotra = $chitiet->getNGaygiotra();
+                $soluong = $chitiet->getGhichu();
+                $sql = "INSERT INTO chitiethoadon (idhoadon, idcar, ngaygiothue, ngaygiotra,traxe,ghichu)
+            VALUES ('$idhoadon', '$idcar', '$ngaygiothue', '$ngaygiotra', 0, '$soluong')";
+                $conn->exec($sql);
+
+                $this->giamSoXe($idcar,$soluong);
+
+            }
+
+
+        } catch (PDOException $e) {
+            // Nếu có lỗi, in ra thông báo lỗi
+            echo "Lỗi: " . $e->getMessage();
+        }
+        header("Location: System.php?cv=giaodich");
+    }
+    //start giaodich
+    public function giaoDich(){
+        $this->loadSystem();
+        include_once ("../views/user/giaodich.php");
+    }
+    //end giaodich
+    public function chiTietHoaDon(){
+        $this->loadSystem();
+        include_once ("../views/user/chitiethoadon.php");
+    }
+
 
 }
 
 
 
 $database = new Database();
-$hethong = new System($database, $database->getdsUsers(), $database->getdsCompany(), $database->getdsCar(), $database->getdsHoaDon(), $database->getdsBinhLuan());
+$hethong = new System($database, $database->getdsUsers(), $database->getdsCompany(), $database->getdsCar(), $database->getdsHoaDon(), $database->getdsChiTietHoaDon(), $database->getdsBinhLuan());
 $cv = "";
 if (isset ($_GET['cv'])) {
     $cv = $_GET['cv'];
@@ -435,10 +913,11 @@ switch ($cv) {
     case "dangnhap":
         if ($hethong->DangNhap($_POST['email'], md5($_POST['password'])) == true) {
             if ($_SESSION['you']->getRole() == 1) {
-                header("Location: ../views/admin/index.php");
+                include_once ("../views/admin/index.php");
 
             } else {
-                header("Location: ../views/user/index.php");
+                // header("Location: ../views/user/index.php");
+                include_once ("../views/user/index.php");
             }
 
 
@@ -475,6 +954,72 @@ switch ($cv) {
         break;
     case 'capnhatxe':
         $hethong->capNhatXe();
+        break;
+    case 'khachhang':
+        $hethong->KhachHang();
+        break;
+    case 'xoakhachhang':
+        $hethong->xoaKhachHang($_GET['id']);
+        break;
+    case 'hoadon':
+        $hethong->hoaDon();
+        break;
+    case 'xoahoadon':
+        $hethong->xoaHoaDon($_GET['id']);
+        break;
+    case 'xacthucthanhtoan':
+        $hethong->xacThucThanhToan($_GET['id']);
+        break;
+    case 'traxe':
+        $hethong->traXe($_GET['id']);
+        break;
+    case 'binhluan':
+        $hethong->binhLuan();
+        break;
+    case 'xoabinhluan':
+        $hethong->xoaBinhLuan($_GET['id']);
+        break;
+    case 'u_xe':
+        $hethong->u_Xe();
+        break;
+    case 'u_home':
+        $hethong->u_Home();
+        break;
+    case 'u_lienhe':
+        $hethong->u_LienHe();
+        break;
+    case 'u_chitiet':
+        $hethong->u_ChiTiet();
+        break;
+    case 'themvaogiohang':
+        $hethong->themvaogiohang();
+        break;
+    case 'giohang':
+        $hethong->giohang();
+        break;
+    case 'xoakhoigiohang':
+        $hethong->xoakhoigiohang();
+        break;
+    case 'cong':
+        $hethong->cong();
+        break;
+    case 'tru':
+        $hethong->tru();
+        break;
+    case 'dangxuat':
+        $hethong->dangXuat();
+        break;
+    case 'thanhtoan':
+        $hethong->thanhToan();
+        break;
+    case 'hoantatthanhtoan':
+        $hethong->hoanTatThanhToan();
+        break;
+    case 'giaodich':
+        $hethong->giaoDich();
+        break;
+    case 'chitiethoadon':
+        $hethong->chiTietHoaDon();
         break;
     //Thêm các trường hợp khác nếu cần
     default:

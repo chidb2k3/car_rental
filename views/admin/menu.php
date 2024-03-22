@@ -43,18 +43,32 @@
                 echo "active";
                 unset($_SESSION['active']);
             }
-             ?>" ><i class="fa fa-th me-2"></i>Hãng xe</a>
+             ?>" ><i class="fa fa-layer-group"></i>Hãng xe</a>
             <a href="/chothuexe/controller/System.php?cv=xe" class="nav-item nav-link
             <?php
             if(isset($_SESSION['active']) && $_SESSION['active']=="xe"){
                 echo "active";
                 unset($_SESSION['active']);
             }
-             ?>"><i class="fa fa-chart-bar me-2"></i>Quản lý xe</a>
-            <a href="taixe.php" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Quản Lý Tài Xế</a>
-            <a href="sanpham.php" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Quản Lý Xe</a>
-            <a href="diadiem.php" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Quản Lý Địa Điểm</a>
-            <a href="chuyendi.php" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Chuyến Đi</a>
+             ?>"><i class="fa fa-car"></i>Quản lý xe</a>
+            <a href="/chothuexe/controller/System.php?cv=khachhang" class="nav-item nav-link  <?php
+            if(isset($_SESSION['active']) && $_SESSION['active']=="khachhang"){
+                echo "active";
+                unset($_SESSION['active']);
+            }
+             ?>"><i class="fa fa-user"></i>Khách hàng</a>
+             <a href="/chothuexe/controller/System.php?cv=hoadon" class="nav-item nav-link  <?php
+            if(isset($_SESSION['active']) && $_SESSION['active']=="hoadon"){
+                echo "active";
+                unset($_SESSION['active']);
+            }
+             ?>"><i class="fa fa-money-bill"></i>Hóa đơn</a>
+             <a href="/chothuexe/controller/System.php?cv=binhluan" class="nav-item nav-link  <?php
+            if(isset($_SESSION['active']) && $_SESSION['active']=="binhluan"){
+                echo "active";
+                unset($_SESSION['active']);
+            }
+             ?>"><i class="fa fa-comment"></i>Bình luận</a>
                     <!-- <a href="widget.html" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Widgets</a>
                     <a href="form.html" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Forms</a>
                     <a href="table.html" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Tables</a>

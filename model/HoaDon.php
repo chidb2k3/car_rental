@@ -4,14 +4,18 @@ class HoaDon {
     // Các thuộc tính
     private $idhoadon;
     private $iduser;
+    private $thoigian;
+    private $tongtien;
    
     private $thanhtoan;
 
 
     // Constructor
-    public function __construct($idhoadon=null, $iduser=null, $thanhtoan=false) {
+    public function __construct($idhoadon=null, $iduser=null,$thoigian=null, $tongtien=null, $thanhtoan=false) {
         $this->idhoadon = $idhoadon;
         $this->iduser = $iduser; 
+        $this->thoigian = $thoigian;
+        $this->tongtien = $tongtien;
         $this->thanhtoan = $thanhtoan;
     }
 
@@ -31,7 +35,15 @@ class HoaDon {
     public function setIdUser($iduser) {
         $this->iduser = $iduser;
     }
-
+    public function getThoigian() {
+        return $this->thoigian;
+    }
+    public function setThoigian($thoigian) {
+        $this->thoigian = $thoigian;
+    }
+    public function getTongtien() {
+        return $this->tongtien;
+    }
 
 
 
