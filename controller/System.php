@@ -896,6 +896,9 @@ class System
         $this->loadSystem();
         include_once ("../views/user/chitiethoadon.php");
     }
+    public function trangChu(){
+        include_once ("../views/admin/index.php");
+    }
 
 
 }
@@ -913,7 +916,7 @@ switch ($cv) {
     case "dangnhap":
         if ($hethong->DangNhap($_POST['email'], md5($_POST['password'])) == true) {
             if ($_SESSION['you']->getRole() == 1) {
-                include_once ("../views/admin/index.php");
+                header("Location: System.php?cv=trangchu");
 
             } else {
                 // header("Location: ../views/user/index.php");
@@ -1020,6 +1023,9 @@ switch ($cv) {
         break;
     case 'chitiethoadon':
         $hethong->chiTietHoaDon();
+        break;
+    case 'trangchu':
+        $hethong->trangChu();
         break;
     //Thêm các trường hợp khác nếu cần
     default:

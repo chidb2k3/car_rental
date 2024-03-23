@@ -17,16 +17,18 @@
             </a>
             <div class="d-flex align-items-center ms-4 mb-4">
                 <div class="position-relative">
-                    <img class="rounded-circle" src="/chothuexe/views/admin/img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                    <img class="rounded-circle" src="/chothuexe/views/img/icon/user.png" alt="" style="width: 40px; height: 40px;">
                     <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
                 </div>
                 <div class="ms-3">
-                    <h6 class="mb-0">Đặng Bá Chí</h6>
+                    <h6 class="mb-0"><?php if(isset($_SESSION['name'])){
+                        echo $_SESSION['name'];
+                    } ?></h6>
                 <span>Admin</span>
             </div>
         </div>
         <div class="navbar-nav w-100">
-            <a href="index.html" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Trang chủ</a>
+            <a href="/chothuexe/controller/System.php?cv=trangchu" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Trang chủ</a>
             <div class="nav-item dropdown">
                 <a href="#" class="nav-link" data-bs-toggle="dropdown"><i class="fa fa-laptop me-2"></i>Quản trị hệ thống</a>
                <!--  <div class="dropdown-menu bg-transparent border-0">
