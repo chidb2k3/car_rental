@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th3 22, 2024 lúc 05:38 PM
+-- Thời gian đã tạo: Th3 23, 2024 lúc 02:18 PM
 -- Phiên bản máy phục vụ: 10.4.28-MariaDB
 -- Phiên bản PHP: 8.2.4
 
@@ -41,7 +41,7 @@ CREATE TABLE `binhluan` (
 --
 
 INSERT INTO `binhluan` (`idbinhluan`, `iduser`, `idcar`, `noidung`, `danhgia`, `thoigian`) VALUES
-(4, 14, 15, 'Xe ok lắm', 4, '2024-03-20 05:12:06');
+(26, 20, 30, 'Xe đẹp thế', 5, '2024-03-23 14:14:04');
 
 -- --------------------------------------------------------
 
@@ -64,13 +64,21 @@ CREATE TABLE `cars` (
 --
 
 INSERT INTO `cars` (`idcar`, `namecar`, `bienso`, `soghe`, `quantity`, `price`, `namecompany`) VALUES
-(15, 'Xe001                         ', 'BS3232', 9, 0, 10000, 'VNV'),
-(17, 'bbb', 'bc11', 4, 44, 1111, 'Vinfact'),
-(18, 'mmmm', 'bv', 7, 4, 11111, 'Honda'),
-(19, 'VV', 'vv44', 9, 112, 1000, 'Vinfact'),
-(25, 'm', 'bs12', 7, 2, 122, 'Vinfact'),
-(26, 'bbbb                          ', 'bs1', 7, 4, 1000, 'Honda'),
-(27, 'AS', 'BSA', 4, 2, 11111, 'Update');
+(30, 'BMS', 'B1', 7, 8, 10000, 'Chevrolet'),
+(31, 'MK', 'MK001', 4, 12, 30000, 'Ford'),
+(32, 'MA', 'MA013', 7, 10, 900, 'Honda'),
+(33, 'IG', 'LP0', 13, 11, 100, 'Hyundai'),
+(34, 'MD', 'LP02', 9, 2, 1000, 'Isuzu'),
+(35, 'FT', 'LP1', 4, 12, 500, 'Kia'),
+(36, 'LP', 'KI8', 7, 12, 1567, 'Lexus'),
+(37, 'FL', 'LH7', 4, 15, 500, 'Mazda'),
+(38, 'LR', 'KY6', 4, 12, 1777, 'Nissan'),
+(39, 'KD', 'LO1', 7, 10, 10000, 'Suzuki'),
+(40, 'FF', 'LF01', 13, 12, 12444, 'Suzuki'),
+(41, 'LL', 'LW1', 9, 2, 1233, 'Hyundai'),
+(42, 'JJK', 'LO01', 7, 12, 10000, 'Honda'),
+(43, 'PLD', 'K0', 7, 12, 1500, 'Lexus'),
+(44, 'KP', 'KP1', 13, 15, 1000, 'Toyota');
 
 -- --------------------------------------------------------
 
@@ -93,8 +101,7 @@ CREATE TABLE `chitiethoadon` (
 --
 
 INSERT INTO `chitiethoadon` (`idchitiet`, `idhoadon`, `idcar`, `ngaygiothue`, `ngaygiotra`, `traxe`, `ghichu`) VALUES
-(1, 2, 15, '2024-03-21 19:19:15', '2024-03-21 19:19:15', 0, 0),
-(4, 3, 15, '2024-03-20 02:12:25', '2024-03-21 20:12:25', 0, 0);
+(24, 42, 30, '2024-03-23 20:14:00', '2024-03-31 20:14:00', 0, 2);
 
 -- --------------------------------------------------------
 
@@ -112,15 +119,17 @@ CREATE TABLE `company` (
 --
 
 INSERT INTO `company` (`idcompany`, `namecompany`) VALUES
-(20, 'ABC'),
-(21, 'adsf'),
-(23, 'adsfads'),
-(25, 'dsa'),
-(9, 'Honda'),
-(26, 'N'),
-(11, 'Update'),
-(1, 'Vinfact'),
-(22, 'VNV');
+(28, 'Chevrolet'),
+(29, 'Ford'),
+(30, 'Honda'),
+(31, 'Hyundai'),
+(32, 'Isuzu'),
+(34, 'Kia'),
+(35, 'Lexus'),
+(36, 'Mazda'),
+(37, 'Nissan'),
+(33, 'Suzuki'),
+(27, 'Toyota');
 
 -- --------------------------------------------------------
 
@@ -141,8 +150,7 @@ CREATE TABLE `hoadon` (
 --
 
 INSERT INTO `hoadon` (`idhoadon`, `iduser`, `thoigian`, `tongtien`, `thanhtoan`) VALUES
-(2, 14, '2024-03-12 23:48:40', 10000, 1),
-(3, 15, '2024-03-21 19:00:51', 2000, 0);
+(42, 20, '2024-03-23 14:14:28', 3840000, 0);
 
 -- --------------------------------------------------------
 
@@ -164,11 +172,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`iduser`, `fullname`, `email`, `password`, `sdt`, `role`) VALUES
-(14, 'Đặng Bá Chí', 'chidb.21it@vku.udn.vn', '202cb962ac59075b964b07152d234b70', 1234567890, 1),
-(15, 'Hồ Sỹ Vinh', 'vinh@gmail.com', '202cb962ac59075b964b07152d234b70', 1123333333, 0),
-(16, 'A', 'a@gmail.com', '202cb962ac59075b964b07152d234b70', 1234567890, 0),
-(17, 'B', 'b@gmail.com', '202cb962ac59075b964b07152d234b70', 1234567890, 0),
-(18, 'C', 'c@gmail.com', '202cb962ac59075b964b07152d234b70', 1234567890, 0);
+(14, 'Admin', 'admin@gmail.com', '202cb962ac59075b964b07152d234b70', 1234567890, 1),
+(20, 'Hiếu', 'hieu@gmail.com', '202cb962ac59075b964b07152d234b70', 1234567809, 0);
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -225,37 +230,37 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT cho bảng `binhluan`
 --
 ALTER TABLE `binhluan`
-  MODIFY `idbinhluan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `idbinhluan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT cho bảng `cars`
 --
 ALTER TABLE `cars`
-  MODIFY `idcar` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `idcar` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT cho bảng `chitiethoadon`
 --
 ALTER TABLE `chitiethoadon`
-  MODIFY `idchitiet` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `idchitiet` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT cho bảng `company`
 --
 ALTER TABLE `company`
-  MODIFY `idcompany` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `idcompany` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT cho bảng `hoadon`
 --
 ALTER TABLE `hoadon`
-  MODIFY `idhoadon` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `idhoadon` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT cho bảng `users`
 --
 ALTER TABLE `users`
-  MODIFY `iduser` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `iduser` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- Các ràng buộc cho các bảng đã đổ

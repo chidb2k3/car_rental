@@ -93,7 +93,11 @@
                         <tbody>
                             <tr>
                                 <?php
-                                $iduser = $_SESSION['iduser'];
+                                $iduser= 0;
+                                if(isset($_SESSION['iduser'])){
+                                    $iduser = $_SESSION['iduser'];
+                                }
+                               
                                 foreach($this->dshoadon as $hoadon){
                                     if ($hoadon->getIdUser()==$iduser) {
                                         echo '<tr>';

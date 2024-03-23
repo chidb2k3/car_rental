@@ -1,4 +1,4 @@
 <?php 
 echo "haha";
-header("Location: views/user/index.php");
+header("Location: controller/System.php?cv=tranghome");
  ?>

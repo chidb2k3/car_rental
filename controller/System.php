@@ -228,11 +228,18 @@ class System
         $this->loadSystem();
         header("Location: System.php?cv=hangxe");
     }
+    
     public function xoaHangXe($id)
     {
         try {
+            $hangxe = $this->layHangXe($id);
+            foreach($this->dscar as $car){
+                if($car->getCompany()==$hangxe->getNameCompany()){
+                    $this->xoaXe($car->getIdcar());
+                }
+            }
 
-            $this->xoaXeTheoHang($this->tenHangXe($id));
+            // $this->xoaXeTheoHang($this->tenHangXe($id));
 
             $conn = $this->database->connect();
             $sql = "DELETE FROM company WHERE idcompany = $id";
@@ -367,26 +374,6 @@ class System
 
     }
 
-    public function xoaXeTheoHang($namecompany)
-    {
-        try {
-            $car = $this->layXeTheoTen($namecompany);
-            $this->xoaChiTietHoaDonTheoXe($car->getIdcar());
-            $conn = $this->database->connect();
-            $sql = "DELETE FROM cars WHERE namecompany = '$namecompany'";
-            $conn->exec($sql);
-            // echo "<script>alert('Xóa thành công!');</script>";
-            // $_SESSION['thongbao'] = "Xóa thành công!";
-
-        } catch (PDOException $e) {
-            // Nếu có lỗi, in ra thông báo lỗi
-            echo "Lỗi: " . $e->getMessage();
-        }
-        // $this->loadSystem();
-        // $this->HangXe();
-        // header("Location: System.php?cv=xe");
-
-    }
     public function layXe($id)
     {
         foreach ($this->dscar as $car) {
@@ -457,7 +444,13 @@ class System
     public function xoaKhachHang($id)
     {
         try {
-            $this->xoaHoaDonTheoMaKH($id);
+            foreach($this->dshoadon as $hoadon){
+                if($hoadon->getIdUser()==$id){
+                    $this->xoaHoaDon($hoadon->getIdHoaDon());
+                }
+            }
+            // $this->xoaHoaDonTheoMaKH($id);
+            $this->xoaBinhLuanTheoKH($id);   
             $conn = $this->database->connect();
             $sql = "DELETE FROM users WHERE iduser = $id";
             $conn->exec($sql);
@@ -493,6 +486,7 @@ class System
     {
         return count($this->dshoadon);
     }
+    
     public function xoaHoaDonTheoMaKH($id)
     {
         try {
@@ -677,6 +671,21 @@ class System
         }
 
     }
+    public function xoaBinhLuanTheoKH($id)
+    {
+        try {
+            $conn = $this->database->connect();
+            $sql = "DELETE FROM binhluan WHERE iduser = $id";
+            $conn->exec($sql);
+            echo "<script>alert('Xóa thành công!');</script>";
+            $_SESSION['thongbao'] = "Xóa thành công!";
+
+        } catch (PDOException $e) {
+            // Nếu có lỗi, in ra thông báo lỗi
+            echo "Lỗi: " . $e->getMessage();
+        }
+
+    }
     public function soLuongBinhLuan()
     {
         return count($this->dsbinhluan);
@@ -705,6 +714,7 @@ class System
     //user
     public function u_Xe()
     {
+        $lists = $this->dscar;
         include_once ("../views/user/cars.php");
     }
     public function u_Home()
@@ -899,6 +909,21 @@ class System
     public function trangChu(){
         include_once ("../views/admin/index.php");
     }
+    public function trangHome(){
+        include_once ("../views/user/index.php");
+    }
+    public function locXe(){
+        $hangxe = $_POST['hangxe'];
+        $lists = [];
+        foreach($this->dscar as $car){
+            if($car->getCompany()==$hangxe){
+                $lists[] = $car;
+            }
+
+        }
+        include_once ("../views/user/cars.php");
+
+    }
 
 
 }
@@ -920,7 +945,8 @@ switch ($cv) {
 
             } else {
                 // header("Location: ../views/user/index.php");
-                include_once ("../views/user/index.php");
+                header("Location: System.php?cv=tranghome");
+                // include_once ("../views/user/index.php");
             }
 
 
@@ -1026,6 +1052,12 @@ switch ($cv) {
         break;
     case 'trangchu':
         $hethong->trangChu();
+        break;
+    case 'tranghome':
+        $hethong->trangHome();
+        break;
+    case 'locxe':
+        $hethong->locXe();
         break;
     //Thêm các trường hợp khác nếu cần
     default:

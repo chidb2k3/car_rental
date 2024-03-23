@@ -1,4 +1,4 @@
-<?php include_once("hight.php"); ?>
+<?php include_once ("hight.php"); ?>
 
 <!doctype html>
 <html lang="en">
@@ -20,9 +20,36 @@
   <link rel="stylesheet" href="/chothuexe/views/user/css/owl.theme.default.min.css">
   <link rel="stylesheet" href="/chothuexe/views/user/fonts/flaticon/font/flaticon.css">
   <link rel="stylesheet" href="/chothuexe/views/user/css/aos.css">
-  
+
   <!-- MAIN CSS -->
   <link rel="stylesheet" href="/chothuexe/views/user/css/style.css">
+  <style>
+    .hero {
+      width: 100%;
+      height: 400px;
+      /* Điều chỉnh chiều cao theo nhu cầu */
+      background-size: cover;
+      background-position: center;
+      transition: background-image 0.5s ease;
+      /* Hiệu ứng chuyển đổi */
+    }
+  </style>
+  <script>
+    var images = ['/chothuexe/views/user/images/hero_1.jpg', '/chothuexe/views/user/images/hero_2.jpg', '/chothuexe/views/user/images/hero_3.jpg']; // Danh sách các hình ảnh
+    var currentIndex = 0; // Chỉ số hiện tại của hình ảnh
+
+    function changeImage() {
+      currentIndex = (currentIndex + 1) % images.length; // Chuyển đến hình ảnh tiếp theo
+      document.getElementById('hero').style.backgroundImage = 'url("' + images[currentIndex] + '")'; // Thay đổi hình ảnh
+    }
+
+    // Gọi hàm changeImage mỗi 3 giây (3000 milliseconds)
+    setInterval(changeImage, 3000);
+
+    // Gọi hàm changeImage ngay khi trang được tải
+    window.onload = changeImage;
+  </script>
+
 
 
 </head>
@@ -48,7 +75,7 @@
 
 
 
-    <div class="hero" style="background-image: url('/chothuexe/views/user/images/hero_1_a.jpg');">
+    <div class="hero" id="hero">
 
       <div class="container">
         <div class="row align-items-center justify-content-center">
@@ -60,32 +87,34 @@
               </div>
             </div>
 
-            <form class="trip-form">
+            <form class="trip-form" action="?cv=locxe" method="POST">
 
-              <div class="row align-items-center">
+              <div class="row align-items-center" style="height: 45px;">
+                <div class="mb-3 mb-md-0 col-md-3" style="margin-left: 10%;">
+                  <div class="form-control-wrap">
+                    <!-- <input type="text" id="cf-4" placeholder="Drop off" class="form-control  px-3"> -->
+                    <label><h6><b>Bạn chưa có xe ư🤔🤔<br>Vậy thì để chúng tôi hỗ trợ bạn👉👉</b></h6></label>
+                    <!-- <span class="icon icon-date_range"></span> -->
+                  </div>
+                </div>
 
                 <div class="mb-3 mb-md-0 col-md-3">
-                  <select name="" id="" class="custom-select form-control">
-                    <option value="">Select Type</option>
-                    <option value="">Ferrari</option>
-                    <option value="">Toyota</option>
-                    <option value="">Ford</option>
-                    <option value="">Lamborghini</option>
+                  <select name="hangxe" id="" class="custom-select form-control">
+                    <?php 
+                    foreach($this->dscompany as $hangxe){
+                      echo '<option value="'.$hangxe->getNameCompany().'">'.$hangxe->getNameCompany().'</option>';
+                    }
+                    ?>
                   </select>
                 </div>
-                <div class="mb-3 mb-md-0 col-md-3">
+                <!-- <div class="mb-3 mb-md-0 col-md-3">
                   <div class="form-control-wrap">
                     <input type="text" id="cf-3" placeholder="Pick up" class="form-control datepicker px-3">
                     <span class="icon icon-date_range"></span>
 
                   </div>
-                </div>
-                <div class="mb-3 mb-md-0 col-md-3">
-                  <div class="form-control-wrap">
-                    <input type="text" id="cf-4" placeholder="Drop off" class="form-control datepicker px-3">
-                    <span class="icon icon-date_range"></span>
-                  </div>
-                </div>
+                </div> -->
+
                 <div class="mb-3 mb-md-0 col-md-3">
                   <input type="submit" value="Search Now" class="btn btn-primary btn-block py-3">
                 </div>
@@ -331,7 +360,7 @@
     </div>
 
 
-   <?php include_once("footer.php"); ?>
+    <?php include_once ("footer.php"); ?>
 
   </div>
 

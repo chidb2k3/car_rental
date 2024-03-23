@@ -80,7 +80,7 @@
         <div class="row">
           <!-- //start xe -->
           <?php
-          foreach ($this->dscar as $car) {
+          foreach ($lists as $car) {
             echo '<div class="col-md-6 col-lg-4 mb-4">
 
             <div class="listing d-block  align-items-stretch">';

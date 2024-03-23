@@ -16,10 +16,10 @@
 
               <nav class="site-navigation text-right ml-auto d-none d-lg-block" role="navigation">
                 <ul class="site-menu main-menu js-clone-nav ml-auto ">
-                  <li class="active"><a href="/chothuexe/controller/System.php?cv=u_home" class="nav-link">Home</a></li>
-                  <li><a href="/chothuexe/controller/System.php?cv=u_xe" class="nav-link">Cars</a></li>
-                  <li><a href="/chothuexe/controller/System.php?cv=giaodich" class="nav-link">Giao dịch</a></li>
-                  <li><a href="/chothuexe/controller/System.php?cv=u_lienhe" class="nav-link">Liên hệ</a></li>
+                  <li class="active"><a href="/chothuexe/controller/System.php?cv=u_home" class="nav-link"><b>Home</b></a></li>
+                  <li><a href="/chothuexe/controller/System.php?cv=u_xe" class="nav-link"><b>Cars</b></a></li>
+                  <li><a href="/chothuexe/controller/System.php?cv=giaodich" class="nav-link"><b>Giao dịch</b></a></li>
+                  <li><a href="/chothuexe/controller/System.php?cv=u_lienhe" class="nav-link"><b>Liên hệ</b></a></li>
                   <li><a href="/chothuexe/controller/System.php?cv=giohang" class="nav-link"><i class="fa-solid fa-cart-shopping"></i><span style="color: red;
                   ">(<?php if(isset($_SESSION['Cart'])){
                     echo count($_SESSION['Cart']);

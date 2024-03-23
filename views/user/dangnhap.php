@@ -60,7 +60,7 @@
 <body style="background-image: url('images/hero_1_a.jpg');" >
 
     <div class="container" style="width: 35%;">
-        <h2 style=" text-align: center; " ><a href="/chothuexe/views/user/index.php">Trang chủ</a>/Đăng Nhập</h2>
+        <h2 style=" text-align: center; " ><a href="/chothuexe/controller/System.php?cv=tranghome">Trang chủ</a>/Đăng Nhập</h2>
         <h1><span style=" color: red;"><?php 
         if(isset($thongbao)){
             echo $thongbao;
